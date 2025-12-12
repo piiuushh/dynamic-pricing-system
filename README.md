@@ -68,21 +68,22 @@ A smart, AI-powered dynamic pricing engine that adjusts service fares in real-ti
 
 ## 📂 Project Structure
 
-```
 dynamic-pricing-system/
-├── data/                   # Data storage
-│   └── india_ride_data.csv # Real-world dataset
+├── data/                   # Data storage (CSV files)
 ├── docs/                   # Documentation
-│   └── technical_reference.md
+│   ├── technical_reference.md
+│   └── SYSTEM_ARCHITECTURE.txt
+├── scripts/                # Utility scripts
+│   └── generate_data.py    # Data generation CLI
 ├── src/                    # Source code
 │   ├── app.py              # Main Streamlit application
-│   ├── generator.py        # Synthetic data generator
+│   ├── generator.py        # Vectorized data generator
 │   ├── features.py         # Feature engineering pipeline
 │   ├── model.py            # ML Model training & inference
 │   └── optimization.py     # Optimization logic
+├── tests/                  # Unit tests
 ├── Dockerfile              # Docker configuration
 ├── docker-compose.yml      # Docker Compose configuration
-├── create_sample_data.py   # Script to generate CSV data
 ├── requirements.txt        # Project dependencies
 └── README.md               # Project documentation
 ```

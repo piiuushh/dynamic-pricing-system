@@ -1,0 +1,54 @@
+SYSTEM ARCHITECTURE
+===================
+
+1. Overview
+-----------
+The Dynamic Pricing System is a Python-based application that simulates and optimizes ride-sharing fares in real-time. It uses Machine Learning (Random Forest) for price prediction and Linear Programming (PuLP) for constraint-based optimization.
+
+2. Components
+-------------
+
+A. Data Generation Layer (src/generator.py, scripts/generate_data.py)
+   - Purpose: Creates synthetic ride request data.
+   - Logic: Uses NumPy vectorization for high-performance generation of timestamp, location, weather, and demand patterns.
+   - Outputs: CSV files (e.g., data/india_ride_data.csv) or in-memory DataFrames.
+   - Optimization: Capable of generating 100,000+ rows in sub-second time.
+
+B. Feature Engineering (src/features.py)
+   - Purpose: Transforms raw ride data into ML-ready features.
+   - Features: demand_ratio, is_peak_hour, is_rainy, is_weekend, etc.
+
+C. Modeling Layer (src/model.py)
+   - Algorithm: Random Forest Regressor.
+   - Training: Predicts a 'price_multiplier' based on features.
+   - Persistence: Saves trained models as .joblib files.
+
+D. Optimization Layer (src/optimization.py)
+   - Algorithm: Linear Programming (PuLP).
+   - Objective: Maximize revenue/price while satisfying constraints.
+   - Constraints:
+     1. Customer Retention >= threshold.
+     2. Driver Utilization <= threshold.
+     3. Trust Region: Price must be close to ML prediction.
+
+E. Application Layer (src/app.py)
+   - Framework: Streamlit.
+   - Caching: Uses @st.cache_data and @st.cache_resource for performance with large datasets.
+   - Data Source: Can toggle between Real-time Simulation and Static CSV Data (100k rows).
+   - Visualization: PyDeck for maps, Plotly for charts.
+
+3. Data Flow
+------------
+1. User configures parameters (or loads CSV).
+2. Generator creates/loads raw data -> Features.py adds columns.
+3. Model.py predicts "Base Surge".
+4. Optimization.py adjusts Surge to "Optimized Surge".
+5. App.py displays Map, Metrics, and Charts.
+
+4. Directory Structure
+----------------------
+- src/: Core logic modules.
+- scripts/: CLI utilities.
+- data/: CSV datasets.
+- tests/: Unit tests.
+- docs/: Documentation.

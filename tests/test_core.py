@@ -13,6 +13,13 @@ def test_generate_synthetic_data():
     for col in required_cols:
         assert col in df.columns
 
+def test_generate_large_dataset():
+    """Test performance/correctness of large dataset generation."""
+    # This ensures vectorization works and doesn't crash
+    df = generate_synthetic_data(n_samples=100000)
+    assert len(df) == 100000
+    assert not df.isnull().values.any()
+
 def test_create_features():
     """Test feature engineering logic."""
     data = {

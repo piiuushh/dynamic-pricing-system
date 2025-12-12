@@ -369,6 +369,17 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+@st.cache_data
+def load_data(use_csv, data_source):
+    if use_csv:
+        if data_source == "Indian Market Data (CSV)" and os.path.exists("data/india_ride_data.csv"):
+             return pd.read_csv("data/india_ride_data.csv")
+        elif os.path.exists("data/sample_ride_data.csv"):
+            return pd.read_csv("data/sample_ride_data.csv")
+        else:
+            return None
+    return None
+
 @st.cache_resource
 def get_model(use_csv=False, data_source="Synthetic Simulation"):
     model_path = "model_csv.joblib" if use_csv else "model_synthetic.joblib"
@@ -379,11 +390,8 @@ def get_model(use_csv=False, data_source="Synthetic Simulation"):
         with st.spinner(f"Training model ({'CSV' if use_csv else 'Synthetic'})..."):
             try:
                 if use_csv:
-                    if data_source == "Indian Market Data (CSV)" and os.path.exists("data/india_ride_data.csv"):
-                         df = pd.read_csv("data/india_ride_data.csv")
-                    elif os.path.exists("data/sample_ride_data.csv"):
-                        df = pd.read_csv("data/sample_ride_data.csv")
-                    else:
+                    df = load_data(use_csv, data_source)
+                    if df is None:
                         st.error("Data file not found.")
                         return None
 
@@ -440,7 +448,7 @@ def main():
     search_area = "" # Default value
     if data_source == "Indian Market Data (CSV)" and os.path.exists("data/india_ride_data.csv"):
         # Load a sample from the Indian dataset for visualization
-        df_full = pd.read_csv("data/india_ride_data.csv")
+        df_full = load_data(True, data_source)
         # Filter for a specific city if needed, or just take a random sample
         # Let's add a city selector for the map if Indian data is active
         with st.sidebar:
