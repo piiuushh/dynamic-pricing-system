@@ -479,7 +479,24 @@ def main():
         # Ensure timestamp is datetime
         df_sim['timestamp'] = pd.to_datetime(df_sim['timestamp'])
             
-        # Ensure we have lat/long
+        # Coordinate Check & Fallback (Bug Fix)
+        if 'latitude' not in df_sim.columns or 'longitude' not in df_sim.columns:
+                st.warning("⚠️ Dataset missing coordinates. Injecting default locations.")
+                loc_map = {
+                "City Center": (28.6139, 77.2090),
+                "Suburbs": (28.5355, 77.3910),
+                "Airport": (28.5562, 77.1000),
+                "Mall": (28.5244, 77.2188),
+                "Tech Park": (28.4950, 77.0895)
+                }
+                # Simple random assignment if unknown
+                df_sim['latitude'] = df_sim['location_name'].map(lambda x: loc_map.get(x, (28.6, 77.2))[0])
+                df_sim['longitude'] = df_sim['location_name'].map(lambda x: loc_map.get(x, (28.6, 77.2))[1])
+                # Add noise
+                df_sim['latitude'] += np.random.normal(0, 0.01, len(df_sim))
+                df_sim['longitude'] += np.random.normal(0, 0.01, len(df_sim))
+            
+        # Ensure we have lat/long (Validation)
         if 'latitude' not in df_sim.columns:
             st.error("Indian data missing coordinates.")
             df_sim = generate_synthetic_data(n_samples=n_requests, start_date=current_date)
